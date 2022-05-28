@@ -14,6 +14,17 @@ export type NftMeta = {
   attributes: NftAttribute[];
 };
 
+export type NftCore = {
+  tokenId: number;
+  price: number;
+  creator: string;
+  isListed: boolean;
+};
+
+export type Nft = {
+  meta: NftMeta;
+} & NftCore;
+
 const NETWORK_ID = process.env.NEXT_PUBLIC_NETWORK_ID;
 
 export const loadContract = async (

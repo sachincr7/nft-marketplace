@@ -1,11 +1,14 @@
-import { NftMeta } from "@_types/nft";
+import { Nft, NftMeta } from "@_types/nft";
 import { NextPage } from "next";
 import { BaseLayout } from "@ui/index";
 import nfts from "../content/meta.json";
+import { useOwnedNfts } from "@/components/hooks/web3";
 
 const tabs = [{ name: "Your Collection", href: "#", current: true }];
 
 const Profile: NextPage = () => {
+  const { nfts } = useOwnedNfts();
+
   function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
   }
@@ -58,9 +61,9 @@ const Profile: NextPage = () => {
                     role="list"
                     className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8"
                   >
-                    {(nfts as NftMeta[]).map((nft) => (
+                    {(nfts.data as Nft[]).map((nft) => (
                       <li
-                        key={nft.name}
+                        key={nft.tokenId}
                         onClick={() => {}}
                         className="relative"
                       >
@@ -73,7 +76,7 @@ const Profile: NextPage = () => {
                           )}
                         >
                           <img
-                            src={nft.image}
+                            src={nft.meta.image}
                             alt=""
                             className={classNames(
                               true ? "" : "group-hover:opacity-75",
@@ -85,12 +88,12 @@ const Profile: NextPage = () => {
                             className="absolute inset-0 focus:outline-none"
                           >
                             <span className="sr-only">
-                              View details for {nft.name}
+                              View details for {nft.meta.name}
                             </span>
                           </button>
                         </div>
                         <p className="mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none">
-                          {nft.name}
+                          {nft.meta.name}
                         </p>
                       </li>
                     ))}
@@ -101,7 +104,7 @@ const Profile: NextPage = () => {
 
             {/* Details sidebar */}
             <aside className="hidden w-96 bg-white p-8 border-l border-gray-200 overflow-y-auto lg:block">
-              {true && (
+              {false && (
                 <div className="pb-16 space-y-6">
                   <div>
                     <div className="block w-full aspect-w-10 aspect-h-7 rounded-lg overflow-hidden">
@@ -115,10 +118,10 @@ const Profile: NextPage = () => {
                       <div>
                         <h2 className="text-lg font-medium text-gray-900">
                           <span className="sr-only">Details for </span>
-                          {nfts[0].name}
+                          {/* {nfts[0].meta.name} */}
                         </h2>
                         <p className="text-sm font-medium text-gray-500">
-                          {nfts[0].description}
+                          {/* {nfts[0].description} */}
                         </p>
                       </div>
                     </div>
@@ -126,7 +129,7 @@ const Profile: NextPage = () => {
                   <div>
                     <h3 className="font-medium text-gray-900">Information</h3>
                     <dl className="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
-                      {nfts[0].attributes.map((attr) => (
+                      {/* {nfts[0].meta.attributes.map((attr) => (
                         <div
                           key={attr.trait_type}
                           className="py-3 flex justify-between text-sm font-medium"
@@ -136,7 +139,7 @@ const Profile: NextPage = () => {
                             {attr.value}
                           </dd>
                         </div>
-                      ))}
+                      ))} */}
                     </dl>
                   </div>
 

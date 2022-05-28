@@ -1,7 +1,7 @@
 import { setupHooks, Web3Hooks } from "@/components/hooks/web3/setupHooks";
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import { Web3Dependencies } from "@_types/hooks";
-import { Contract, providers } from "ethers";
+// import { Contract, providers } from "ethers";
 
 declare global {
   interface Window {
