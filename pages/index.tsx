@@ -6,10 +6,7 @@ import { useWeb3 } from "@/components/providers/web3";
 import { useListedNfts } from "@hooks/web3";
 
 const Home: NextPage = () => {
-  const { contract, provider } = useWeb3();
   const { nfts } = useListedNfts();
-
-  console.log("nfts", nfts);
 
   return (
     <>
@@ -28,7 +25,7 @@ const Home: NextPage = () => {
                 Mint a NFT to get unlimited ownership forever!
               </p>
             </div>
-            <NftList nfts={nfts?.data as Nft[]} />
+            <NftList />
           </div>
         </div>
       </BaseLayout>
