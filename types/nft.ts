@@ -21,6 +21,19 @@ export type NftCore = {
   isListed: boolean;
 };
 
+export type FileReq = {
+  bytes: Uint8Array;
+  contentType: string;
+  fileName: string;
+};
+
+export type PinataRes = {
+  IpfsHash: string;
+  PinSize: number;
+  Timestamp: string;
+  isDuplicate: boolean;
+};
+
 export type Nft = {
   meta: NftMeta;
 } & NftCore;
