@@ -10,6 +10,7 @@ import { ExclamationIcon } from "@heroicons/react/outline";
 import { useNetwork } from "@/components/hooks/web3";
 import { ethers } from "ethers";
 import { toast } from "react-toastify";
+import Head from "next/head";
 
 const ALLOWED_FIELDS = ["name", "description", "image", "attributes"];
 
@@ -62,12 +63,18 @@ const NftCreate: NextPage = () => {
     try {
       const { signedData, account } = await getSignedData();
 
-      const res = await axios.post("/api/verify-image", {
+      const promise = axios.post("/api/verify-image", {
         address: account,
         signature: signedData,
         bytes,
         contentType: file.type,
         fileName: file.name.replace(/\.[^/.]+$/, ""),
+      });
+
+      const res = await toast.promise(promise, {
+        pending: "Uploading image",
+        success: "Image uploaded",
+        error: "Image upload error",
       });
 
       const data = res.data as PinataRes;
@@ -105,10 +112,16 @@ const NftCreate: NextPage = () => {
     try {
       const { signedData, account } = await getSignedData();
 
-      const res = await axios.post("/api/verify", {
+      const promise = axios.post("/api/verify", {
         address: account,
         signature: signedData,
         nft: nftMeta,
+      });
+
+      const res = await toast.promise(promise, {
+        pending: "Uploading metadata",
+        success: "Metadata uploaded",
+        error: "Metadata upload error",
       });
 
       const data = res.data as PinataRes;
@@ -141,7 +154,7 @@ const NftCreate: NextPage = () => {
 
       await toast.promise(tx!.wait(), {
         pending: "Minting Nft Token",
-        success: "Nft has ben created",
+        success: "Nft has been created",
         error: "Minting error",
       });
     } catch (e: any) {
@@ -149,34 +162,39 @@ const NftCreate: NextPage = () => {
     }
   };
 
-  // if (!network.isConnectedToNetwork) {
-  //   return (
-  //     <BaseLayout>
-  //       <div className="rounded-md bg-yellow-50 p-4 mt-10">
-  //         <div className="flex">
-  //           <div className="flex-shrink-0">
-  //             <ExclamationIcon className="h-5 w-5 text-yellow-400" aria-hidden="true" />
-  //           </div>
-  //           <div className="ml-3">
-  //             <h3 className="text-sm font-medium text-yellow-800">Attention needed</h3>
-  //             <div className="mt-2 text-sm text-yellow-700">
-  //               <p>
-  //               { network.isLoading ?
-  //                 "Loading..." :
-  //                 `Connect to ${network.targetNetwork}`
-  //               }
-  //               </p>
-  //             </div>
-  //           </div>
-  //         </div>
-  //       </div>
-  //     </BaseLayout>
-  //   )
-  // }
+  if (!network.isConnectedToNetwork) {
+    return (
+      // @ts-ignore
+      <BaseLayout>
+        <div className="rounded-md bg-yellow-50 p-4 mt-10">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <ExclamationIcon
+                className="h-5 w-5 text-yellow-400"
+                aria-hidden="true"
+              />
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-yellow-800">
+                Attention needed
+              </h3>
+              <div className="mt-2 text-sm text-yellow-700">
+                <p>
+                  {network.isLoading
+                    ? "Loading..."
+                    : `Connect to ${network.targetNetwork}`}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </BaseLayout>
+    );
+  }
 
   return (
     // @ts-ignore
-    <BaseLayout>
+    <BaseLayout tabTitle="Create NFT">
       <div>
         <div className="py-4">
           {!nftURI && (

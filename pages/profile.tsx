@@ -24,7 +24,7 @@ const Profile: NextPage = () => {
 
   return (
     // @ts-ignore
-    <BaseLayout>
+    <BaseLayout tabTitle="Profile">
       <div className="h-full flex">
         <div className="flex-1 flex flex-col overflow-hidden">
           <div className="flex-1 flex items-stretch overflow-hidden">
