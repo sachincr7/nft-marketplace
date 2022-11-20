@@ -24,10 +24,13 @@ const Web3Provider = ({ children }: any) => {
   useEffect(() => {
     const initWeb3 = async () => {
       try {
+        console.log("window.ethereum", window.ethereum);
         const provider = new ethers.providers.Web3Provider(
           window.ethereum as any
         );
+
         const contract = await loadContract("NftMarket", provider);
+        console.log("contract", contract);
 
         const signer = provider.getSigner();
         const signedContract = contract.connect(signer);
@@ -42,6 +45,7 @@ const Web3Provider = ({ children }: any) => {
           })
         );
       } catch (error: any) {
+        console.log("error", error);
         console.error("Please install Web3 wallet");
         setWeb3Api((api) =>
           createWeb3State({

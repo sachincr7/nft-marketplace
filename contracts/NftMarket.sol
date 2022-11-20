@@ -20,14 +20,13 @@ contract NftMarket is ERC721URIStorage, Ownable {
     Counters.Counter private _listedItems;
     Counters.Counter private _tokenIds;
 
-    uint256[] private _allNfts;
-
     mapping(string => bool) private _usedTokenURIs;
     mapping(uint256 => NftItem) private _idToNftItem;
 
     mapping(address => mapping(uint256 => uint256)) private _ownedTokens;
     mapping(uint256 => uint256) private _idToOwnedIndex;
 
+    uint256[] private _allNfts;
     mapping(uint256 => uint256) private _idToNftIndex;
 
     event NftItemCreated(
@@ -37,7 +36,7 @@ contract NftMarket is ERC721URIStorage, Ownable {
         bool isListed
     );
 
-    constructor() ERC721("DarkNovaNFT", "DNNFT") {}
+    constructor() ERC721("CreaturesNFT", "CNFT") {}
 
     function setListingPrice(uint256 newPrice) external onlyOwner {
         require(newPrice > 0, "Price must be at least 1 wei");
@@ -105,10 +104,6 @@ contract NftMarket is ERC721URIStorage, Ownable {
         return items;
     }
 
-    function burnToken(uint256 tokenId) public {
-        _burn(tokenId);
-    }
-
     function mintToken(string memory tokenURI, uint256 price)
         public
         payable
@@ -133,6 +128,20 @@ contract NftMarket is ERC721URIStorage, Ownable {
         return newTokenId;
     }
 
+    function buyNft(uint256 tokenId) public payable {
+        uint256 price = _idToNftItem[tokenId].price;
+        address owner = ERC721.ownerOf(tokenId);
+
+        require(msg.sender != owner, "You already own this NFT");
+        require(msg.value == price, "Please submit the asking price");
+
+        _idToNftItem[tokenId].isListed = false;
+        _listedItems.decrement();
+
+        _transfer(owner, msg.sender, tokenId);
+        payable(owner).transfer(msg.value);
+    }
+
     function placeNftOnSale(uint256 tokenId, uint256 newPrice) public payable {
         require(
             ERC721.ownerOf(tokenId) == msg.sender,
@@ -152,20 +161,6 @@ contract NftMarket is ERC721URIStorage, Ownable {
         _listedItems.increment();
     }
 
-    function buyNft(uint256 tokenId) public payable {
-        uint256 price = _idToNftItem[tokenId].price;
-        address owner = ERC721.ownerOf(tokenId);
-
-        require(msg.sender != owner, "You already own this NFT");
-        require(msg.value == price, "Please submit the asking price");
-
-        _idToNftItem[tokenId].isListed = false;
-        _listedItems.decrement();
-
-        _transfer(owner, msg.sender, tokenId);
-        payable(owner).transfer(msg.value);
-    }
-
     function _createNftItem(uint256 tokenId, uint256 price) private {
         require(price > 0, "Price must be at least 1 wei");
 
@@ -181,7 +176,6 @@ contract NftMarket is ERC721URIStorage, Ownable {
     ) internal virtual override {
         super._beforeTokenTransfer(from, to, tokenId);
 
-        // minting token
         if (from == address(0)) {
             _addTokenToAllTokensEnumeration(tokenId);
         } else if (from != to) {

@@ -53,7 +53,8 @@ export default withSession(
         await req.session.save();
 
         return res.json(message);
-      } catch {
+      } catch (error) {
+        console.log("error", error);
         res.status(422).send({ message: "Cannot generate a message!" });
       }
     } else {
